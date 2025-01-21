@@ -3,8 +3,8 @@ from database.models import Map, Player
 from peewee import *
 
 class PlayerStat(BaseModel):
-    map_id = ForeignKeyField(Map, backref='player_stats')
-    player_id = ForeignKeyField(Player, backref='stats')
+    map = ForeignKeyField(Map, backref='player_stats')
+    player = ForeignKeyField(Player, backref='stats')
 
     one_v_one_count = SmallIntegerField()
     one_v_one_wins = SmallIntegerField()
@@ -57,8 +57,8 @@ class PlayerStat(BaseModel):
     def initialize(player: dict, map: Map):
         playerstats: dict = player.get("player_stats")
         return PlayerStat(
-            map_id=map,
-            player_id=player.get("player_id"),
+            map=map,
+            player=player.get("player_id"),
             one_v_one_count=int(playerstats.get("1v1Count", 0)),
             one_v_one_wins=int(playerstats.get("1v1Wins", 0)),
             one_v_two_count=int(playerstats.get("1v2Count", 0)),

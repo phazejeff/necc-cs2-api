@@ -4,7 +4,7 @@ from necc import nationals_table
 from peewee import *
 
 class Placement(BaseModel):
-    team_id = ForeignKeyField(Team)
+    team = ForeignKeyField(Team)
     fall_season_placement = SmallIntegerField(default=0)
     fall_playoff_placement = SmallIntegerField(default=0)
     spring_season_placement = SmallIntegerField(default=0)
@@ -22,4 +22,3 @@ class Placement(BaseModel):
                 nationals_table["playoffs"][placement.spring_playoff_placement]
             )
         Placement.bulk_update(placements, fields=[Placement.national_points])
-        
