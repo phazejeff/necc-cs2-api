@@ -1,5 +1,6 @@
-nationals_dict = {
+nationals_table = {
     "season" : {
+        0 : 0,
         1 : 75,
         2 : 65,
         3 : 55,
@@ -10,6 +11,7 @@ nationals_dict = {
         8 : 20
     },
     "playoffs" : {
+        0 : 0,
         1 : 100,
         2 : 85,
         3 : 75,

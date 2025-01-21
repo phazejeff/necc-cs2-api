@@ -8,3 +8,13 @@ class Player(BaseModel):
     nickname = TextField()
     avatar = TextField()
     level = SmallIntegerField()
+
+    @staticmethod
+    def initialize(player: dict, team: dict):
+        return Player(
+            player_id = player.get("player_id"),
+            team = team.get("faction_id"),
+            nickname = player.get("nickname"),
+            avatar = player.get("avatar"),
+            level = player.get("game_skill_level")
+        )
