@@ -36,11 +36,6 @@ matches: list[dict] = faceit.get_championship_matches(TOURNAMENT_ID, "past", 100
 while len(matches) != 0:
     print(f"Running offset {offset}")
     for match in matches:
-        if match.get("status") == "CANCELLED":
-            continue
-
-        match_stats: dict = faceit.get_match_stats(match.get("match_id"))
-
         team1: dict = match.get("teams").get("faction1")
         team1_db = Team.initialize(match, team1)
         team2: dict = match.get("teams").get("faction2")
@@ -50,6 +45,14 @@ while len(matches) != 0:
             teams_db.append(team1_db)
         if team2_db not in teams_db:
             teams_db.append(team2_db)
+
+        match_db = Match.initialize(match, team1, team2)
+
+        if match_db not in matches_db:
+            matches_db.append(match_db)
+
+        if team1_db.name == 'bye' or team2_db.name == 'bye':
+            continue
 
         for player in team1.get("roster"):
             player: dict
@@ -62,12 +65,8 @@ while len(matches) != 0:
             player_db = Player.initialize(player, team2)
             if player_db not in players_db:
                 players_db.append(player_db)
-
-        match_db = Match.initialize(match, team1, team2)
-
-        if match_db not in matches_db:
-            matches_db.append(match_db)
         
+        match_stats: dict = faceit.get_match_stats(match.get("match_id"))
         rounds = match_stats.get("rounds")
         if rounds == None:
             continue
@@ -128,3 +127,7 @@ for third_place_id in THIRD_PLACE_IDS:
             placement_db: Placement = Placement.get(Placement.team_id == team.get("id"))
             placement_db.fall_playoff_placement = item.get("bounds").get("left") + 2
             placement_db.save()
+
+Placement.update_all_national_points()
+
+print("Done.")

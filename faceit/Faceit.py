@@ -22,8 +22,6 @@ class Faceit:
         for match in items:
             if match.get("status") == "CANCELLED":
                 continue
-            if match.get("teams").get("faction1").get("type") == "bye" or match.get("teams").get("faction2").get("type") == "bye":
-                continue
             matches.append(match)
         return matches
     
