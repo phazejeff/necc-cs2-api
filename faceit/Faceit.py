@@ -1,10 +1,10 @@
 import requests
-from . import Match
-from . import Result
 class Faceit:
     def __init__(self, api_key):
         self.api_key = api_key
         self.api_root = "https://open.faceit.com/data/v4"
+        self.api_v1_root = "https://www.faceit.com/api/stats/v1"
+        self.game_id = "cs2"
 
     def _get_header(self):
         return {
@@ -18,14 +18,90 @@ class Faceit:
             headers=self._get_header()
         ).json()
         items = r.get('items')
-        matches: list[Match] = []
+        matches = []
         for match in items:
-            matches.append(Match(match, self))
+            if match.get("status") == "CANCELLED":
+                continue
+            if match.get("teams").get("faction1").get("type") == "bye" or match.get("teams").get("faction2").get("type") == "bye":
+                continue
+            matches.append(match)
         return matches
+    
+    def get_match_ids_from_championship_group(self, championship_id, group, offset, limit):
+        r: dict = requests.get(f"https://www.faceit.com/api/match/v3/match?entityId={championship_id}&entityType=championship&group={group}&offset={offset}&limit={limit}").json()
+        match_ids = []
+        for i in r.get('payload'):
+            i: dict
+            match_ids.append(i.get('id'))
 
-    def get_match_stats(self, match: Match):
-        print(match.id)
+        return match_ids
+    
+    def get_match_stats(self, match_id):
         return requests.get(
-            f"{self.api_root}/matches/{match.id}/stats", 
+            f"{self.api_root}/matches/{match_id}/stats", 
             headers=self._get_header()
         ).json()
+    
+    def get_all_groups(self, championship_id):
+        r: dict = requests.get(
+            f"{self.api_root}/leaderboards/championships/{championship_id}",
+            headers=self._get_header()
+        ).json()
+
+        groups = []
+        for item in r.get("items"):
+            item: dict
+            groups.append(item.get("group"))
+        return groups
+    
+    def get_rankings(self, championship_id, group=None):
+        url = f"{self.api_root}/leaderboards/championships/{championship_id}"
+        if group:
+            url = url + f"/groups/{group}"
+        r: dict = requests.get(
+            url,
+            headers=self._get_header()    
+        ).json()
+        items: list[dict] = r.get('items')
+        return items
+    
+    def get_playoff_rankings(self, championship_id):
+        r: dict = requests.get(
+            f"{self.api_root}/championships/{championship_id}/results",
+            headers=self._get_header()    
+        ).json()
+        return r
+    
+    def get_team_games(self, team_id, tournament_id):
+        r: dict = requests.get(
+            f"{self.api_v1_root}/stats/time/teams/{team_id}/games/{self.game_id}" 
+        ).json()
+        games = {
+            "won" : [],
+            "loss" : []
+        }
+
+        done = []
+        for game in r:
+            game: dict
+            match_id: str = game.get("matchId")
+            if tournament_id != game.get("competitionId"):
+                continue
+            if match_id in done:
+                continue
+            match = self.get_match(match_id)
+            if match.result.team1.id == team_id:
+                maps_won = match.result.bo3_score_1
+                maps_lost = match.result.bo3_score_2
+            else:
+                maps_won = match.result.bo3_score_2
+                maps_lost = match.result.bo3_score_1
+            for i in range(maps_won):
+                games["won"].append(match)
+            for i in range(maps_lost):
+                games["loss"].append(match)
+            done.append(match.id)
+
+        return games
+
+    

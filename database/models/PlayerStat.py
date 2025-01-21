@@ -1,15 +1,16 @@
-from . import *
+from database import BaseModel
+from database.models import Map, Player
 from peewee import *
 
 class PlayerStat(BaseModel):
-    map_id = ForeignKeyField(Map)
-    player_id = ForeignKeyField(Player)
+    map_id = ForeignKeyField(Map, backref='player_stats')
+    player_id = ForeignKeyField(Player, backref='stats')
 
     one_v_one_count = SmallIntegerField()
     one_v_one_wins = SmallIntegerField()
     one_v_two_count = SmallIntegerField()
     one_v_two_wins = SmallIntegerField()
-    adr = SmallIntegerField()  # Average Damage per Round
+    adr = FloatField()  # Average Damage per Round
     assists = SmallIntegerField()
     clutch_kills = SmallIntegerField()
     damage = IntegerField()
