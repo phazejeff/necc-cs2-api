@@ -6,9 +6,6 @@ from faceit import Faceit
 from database.models import Team, Player, TeamCaptain, Match, Map, PlayerStat, Placement
 from database import database
 import os
-from datetime import datetime
-import uuid
-from pprint import pprint
 import json
 
 if __name__ == "__main__":
