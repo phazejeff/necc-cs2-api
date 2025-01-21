@@ -1,17 +1,7 @@
-import os
-import requests
-import json
-import pprint
-from faceit import Faceit
-from database.models import Placement
+from database.models import Placement, Team
 
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()
+placements = Placement.select().order_by(Placement.national_points.desc()).where(Placement.fall_playoff_placement != 1)
 
-FACEIT_KEY = os.getenv("FACEIT_KEY")
-TOURNAMENT_ID = os.getenv("FACEIT_TOURNAMENT_ID")
-
-faceit = Faceit(FACEIT_KEY)
-
-Placement.update_all_national_points()
+for pos, placement in enumerate(placements):
+    placement: Placement
+    print(f"{pos + 1}: {placement.team_id.name} ({placement.national_points})")
