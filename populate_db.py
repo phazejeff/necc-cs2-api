@@ -83,7 +83,7 @@ while len(matches) != 0:
             for team in teams:
                 players: list[dict] = team.get("players")
                 for player in players:
-                    playerstat_db = PlayerStat.initialize(player, map)
+                    playerstat_db = PlayerStat.initialize(player, map_db)
                     
                     if playerstat_db not in playerstats_db:
                         playerstats_db.append(playerstat_db)
