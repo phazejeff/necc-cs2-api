@@ -4,7 +4,7 @@ import uuid
 from peewee import *
 
 class Map(BaseModel):
-    match = ForeignKeyField(Match, backref='maps')
+    match_id = ForeignKeyField(Match, backref='maps')
     map_id = UUIDField(primary_key=True)
     map_num = SmallIntegerField()
     team1_score = SmallIntegerField()

@@ -1,34 +1,101 @@
-from database.models import Team, Match
+from database.models import Team, Match, Map
 from peewee import fn, JOIN
 
-def get_group_rankings(group):
-    match_winner: Match = Match.alias()
-    match_loser: Match = Match.alias()
+def get_group_rankings(group):  
+    teams = get_teams_from_group(group)
+    teams_dict = []
+    for team in teams:
+        team["record"] = {
+            "matches" : {
+                "won" : get_matches_won(team),
+                "lost" : get_matches_lost(team)
+            },
+            "maps" : {
+                "won" : get_maps_won(team),
+                "lost" : get_maps_lost(team)
+            },
+            "rounds" : {
+                "won" : get_rounds_won(team),
+                "lost" : get_rounds_lost(team)
+            }
+        }
+        teams_dict.append(team)
+        get_rounds_won(team)
+    
 
-    teams_won = (Team
-                    .select(Team, fn.COUNT(match_winner.match_id).alias("matches_won_count"))
-                    .join(match_winner, JOIN.LEFT_OUTER, on=(Team.team_id == match_winner.winner))  # Join for won matches
-                    .where(Team.group == group)
-                    .where(Team.team_id != "bye")
-                    .group_by(Team)
-                )
+    teams_sorted = sorted(
+        teams_dict, 
+        key=lambda team: (
+            (team["record"]["matches"]["won"]),
+            (team["record"]["maps"]["won"] - team["record"]["maps"]["lost"]),
+            (team["record"]["rounds"]["won"] - team["record"]["rounds"]["lost"])     
+        ), 
+        reverse=True)
+    return teams_sorted
 
-    teams_lost = (Team
-                    .select(Team, fn.COUNT(match_loser.match_id).alias("matches_lost_count"))
-                    .join(match_loser, JOIN.LEFT_OUTER, on=(
-                        (
-                            (match_loser.team1 == Team.team_id) | 
-                            (match_loser.team2 == Team.team_id)
-                        ) & 
-                        (Team.team_id != match_loser.winner)
-                        )  
-                    )  # Join for lost matches
-                    .where(Team.group == group)
-                    .where(Team.team_id != "bye")
-                    .group_by(Team)
-                )
 
-    teams_won = sorted(teams_won, key=lambda team: len(team.matches_won), reverse=True)
-    teams_lost = sorted(teams_lost, key=lambda team: len(team.matches_won), reverse=True)
 
-    return teams_won, teams_lost
+def get_teams_from_group(group):
+    return (Team
+            .select(Team)
+            .where(Team.group == group)
+            ).dicts()
+
+def get_matches_won(team):
+    return (Match
+            .select(Match)
+            .where(Match.winner == team['team_id'])
+            ).count()
+
+def get_matches_lost(team):
+    return (Match
+            .select(Match)
+            .where(
+                (Match.winner != team['team_id']) &
+                ((Match.team1 == team['team_id']) | (Match.team2 == team['team_id']))
+            )
+            ).count()
+
+def get_maps_won(team):
+    return(Map
+           .select(Map)
+           .where(Map.winner == team['team_id'])
+           ).count()
+
+def get_maps_lost(team):
+    return (Map
+            .select(Map)
+            .join(Match)
+            .where(
+                (Map.winner != team['team_id']) &
+                ((Match.team1 == team['team_id']) | (Match.team2 == team['team_id']))
+            )
+            ).count()
+
+def get_rounds_won(team):
+    team1_score = (Map
+                   .select(fn.SUM(Map.team1_score))
+                   .join(Match)
+                   .where(Match.team1 == team['team_id'])
+                   ).scalar()
+    
+    team2_score = (Map
+                   .select(fn.SUM(Map.team2_score))
+                   .join(Match)
+                   .where(Match.team2 == team['team_id'])
+                   ).scalar()
+    return team1_score + team2_score
+
+def get_rounds_lost(team):
+    team1_score = (Map
+                   .select(fn.SUM(Map.team1_score))
+                   .join(Match)
+                   .where(Match.team2 == team['team_id'])
+                   ).scalar()
+    
+    team2_score = (Map
+                   .select(fn.SUM(Map.team2_score))
+                   .join(Match)
+                   .where(Match.team1 == team['team_id'])
+                   ).scalar()
+    return team1_score + team2_score

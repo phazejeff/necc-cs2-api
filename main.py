@@ -24,15 +24,7 @@ def nationals():
 
 @app.route("/seasonrankings/<int:group>")
 def season_rankings(group: int):
-    teams_won, teams_lost = get_group_rankings(group)
-    teams_list: list[dict] = []
-    for i, team in enumerate(teams_won):
-        team_dict = model_to_dict(team)
-        team_dict['record'] = {
-            "win" : teams_won[i].matches_won_count,
-            "loss" : teams_lost[i].matches_lost_count
-        }
-        teams_list.append(team_dict)
+    teams_list = get_group_rankings(group)
     
     return teams_list
 
