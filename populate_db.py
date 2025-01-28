@@ -7,6 +7,7 @@ from database.models import Team, Player, TeamCaptain, Match, Map, PlayerStat, P
 from database import database
 import os
 import json
+from peewee import DoesNotExist
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
@@ -33,6 +34,11 @@ matches: list[dict] = faceit.get_championship_matches(TOURNAMENT_ID, "past", 100
 while len(matches) != 0:
     print(f"Running offset {offset}")
     for match in matches:
+        try: 
+            Match.get_by_id(match.get("match_id"))
+        except DoesNotExist:
+            continue
+
         team1: dict = match.get("teams").get("faction1")
         team1_db = Team.initialize(match, team1)
         team2: dict = match.get("teams").get("faction2")
