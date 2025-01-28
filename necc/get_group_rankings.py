@@ -73,14 +73,15 @@ def get_maps_lost(team):
             ).count()
 
 def get_rounds_won(team):
+    print(team)
     team1_score = (Map
-                   .select(fn.SUM(Map.team1_score))
+                   .select(fn.COALESCE(fn.SUM(Map.team1_score), 0))
                    .join(Match)
                    .where(Match.team1 == team['team_id'])
                    ).scalar()
     
     team2_score = (Map
-                   .select(fn.SUM(Map.team2_score))
+                   .select(fn.COALESCE(fn.SUM(Map.team2_score), 0))
                    .join(Match)
                    .where(Match.team2 == team['team_id'])
                    ).scalar()
@@ -88,13 +89,13 @@ def get_rounds_won(team):
 
 def get_rounds_lost(team):
     team1_score = (Map
-                   .select(fn.SUM(Map.team1_score))
+                   .select(fn.COALESCE(fn.SUM(Map.team1_score), 0))
                    .join(Match)
                    .where(Match.team2 == team['team_id'])
                    ).scalar()
     
     team2_score = (Map
-                   .select(fn.SUM(Map.team2_score))
+                   .select(fn.COALESCE(fn.SUM(Map.team2_score), 0))
                    .join(Match)
                    .where(Match.team1 == team['team_id'])
                    ).scalar()
