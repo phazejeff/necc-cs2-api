@@ -73,7 +73,6 @@ def get_maps_lost(team):
             ).count()
 
 def get_rounds_won(team):
-    print(team)
     team1_score = (Map
                    .select(fn.COALESCE(fn.SUM(Map.team1_score), 0))
                    .join(Match)
@@ -100,3 +99,8 @@ def get_rounds_lost(team):
                    .where(Match.team1 == team['team_id'])
                    ).scalar()
     return team1_score + team2_score
+
+def get_number_of_groups():
+    return (Team
+            .select(fn.MAX(Team.group))
+            ).scalar()
