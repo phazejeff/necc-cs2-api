@@ -1,0 +1,14 @@
+services:
+  necc-cs2-api:
+    image: phazejeff/necc-cs2-api:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - /local/necc-databases:/static
+    environment:
+      - FACEIT_KEY=aaaa
+      - FACEIT_TOURNAMENT_ID=aaaa
+      - FACEIT_PLAYOFFS_IDS=["aaaa", "aaaa"]
+      - FACEIT_THIRD_PLACE_IDS=["aaaa", "aaaa"]
+      - FACEIT_GROUP_AMOUNT=10
+      - DB_NAME=Fall2024.db
