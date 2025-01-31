@@ -2,3 +2,4 @@
 .env
 /database/models/__pycache__
 /static
+/docker-compose.yml
