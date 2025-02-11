@@ -30,14 +30,16 @@ maps_db: list[Map] = []
 teamcaptain_db: list[TeamCaptain] = []
 playerstats_db: list[PlayerStat] = []
 offset = 0
-matches: list[dict] = faceit.get_championship_matches(TOURNAMENT_ID, "past", 100, offset)
+pageAmount = 100
+matches: list[dict] = faceit.get_championship_matches(TOURNAMENT_ID, "past", pageAmount, offset)
 while len(matches) != 0:
     print(f"Running offset {offset}")
     for match in matches:
         try: 
             Match.get_by_id(match.get("match_id"))
-        except DoesNotExist:
             continue
+        except DoesNotExist:
+            pass
 
         team1: dict = match.get("teams").get("faction1")
         team1_db = Team.initialize(match, team1)
@@ -90,8 +92,8 @@ while len(matches) != 0:
                     if playerstat_db not in playerstats_db:
                         playerstats_db.append(playerstat_db)
 
-    offset += 100
-    matches: list[dict] = faceit.get_championship_matches(TOURNAMENT_ID, "past", 100, offset)
+    offset += pageAmount
+    matches: list[dict] = faceit.get_championship_matches(TOURNAMENT_ID, "past", pageAmount, offset)
 
 with database.atomic():
     Team.bulk_create(teams_db, batch_size=50)
