@@ -46,10 +46,17 @@ while len(matches) != 0:
         team2: dict = match.get("teams").get("faction2")
         team2_db = Team.initialize(match, team2)
 
-        if team1_db not in teams_db:
-            teams_db.append(team1_db)
-        if team2_db not in teams_db:
-            teams_db.append(team2_db)
+        try: 
+            Team.get_by_id(team1_db.team_id)
+        except DoesNotExist:
+            if team1_db not in teams_db:
+                teams_db.append(team1_db)
+        
+        try: 
+            Team.get_by_id(team2_db.team_id)
+        except DoesNotExist:
+            if team2_db not in teams_db:
+                teams_db.append(team2_db)
 
         match_db = Match.initialize(match, team1, team2)
 
@@ -62,14 +69,20 @@ while len(matches) != 0:
         for player in team1.get("roster"):
             player: dict
             player_db = Player.initialize(player, team1)
-            if player_db not in players_db:
-                players_db.append(player_db)
+            try: 
+                Player.get_by_id(player_db.player_id)
+            except DoesNotExist:
+                if player_db not in players_db:
+                    players_db.append(player_db)
 
         for player in team2.get("roster"):
             player: dict
             player_db = Player.initialize(player, team2)
-            if player_db not in players_db:
-                players_db.append(player_db)
+            try: 
+                Player.get_by_id(player_db.player_id)
+            except DoesNotExist:
+                if player_db not in players_db:
+                    players_db.append(player_db)
         
         match_stats: dict = faceit.get_match_stats(match.get("match_id"))
         rounds = match_stats.get("rounds")
