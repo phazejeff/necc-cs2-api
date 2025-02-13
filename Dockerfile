@@ -1,7 +1,7 @@
 FROM python:3
 
 RUN apt-get update && apt-get install -y cron
-RUN echo "*/5 * * * * /usr/local/bin/python3 /app/populate_db.py >> /var/log/cron.log 2>&1" > /etc/cron.d/populate-db-cron
+RUN echo "*/5 * * * * python3 /populate_db.py >> /var/log/cron.log 2>&1" > /etc/cron.d/populate-db-cron
 
 RUN chmod 0644 /etc/cron.d/populate-db-cron
 RUN crontab /etc/cron.d/populate-db-cron
