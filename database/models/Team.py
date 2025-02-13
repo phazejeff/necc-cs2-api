@@ -6,12 +6,14 @@ class Team(BaseModel):
     group = SmallIntegerField()
     name = TextField()
     avatar = TextField(null=True)
+    division = SmallIntegerField()
 
     @staticmethod
-    def initialize(match: dict, team: dict):
+    def initialize(match: dict, team: dict, division: int):
         return Team(
             team_id = team.get("faction_id"),
             group = match.get("group"),
             name = team.get("name"),
-            avatar = match.get("avatar")
+            avatar = match.get("avatar"),
+            division = division
         )
