@@ -2,8 +2,10 @@ import requests
 class Faceit:
     def __init__(self, api_key):
         self.api_key = api_key
+        # faceit please fix your dogshit api endpoints thanks
         self.api_root = "https://open.faceit.com/data/v4"
         self.api_v1_root = "https://www.faceit.com/api/stats/v1"
+        self.api_v1_championships_root = "https://www.faceit.com/api/championships/v1"
         self.game_id = "cs2"
 
     def _get_header(self):
@@ -102,4 +104,9 @@ class Faceit:
 
         return games
 
+    def get_championship_details(self, championship_id) -> dict:
+        r: dict = requests.get(
+            f"{self.api_v1_championships_root}/championship/{championship_id}"
+        ).json()
+        return r.get('payload')
     
