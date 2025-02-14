@@ -106,3 +106,8 @@ def get_number_of_groups(division: int):
             .select(fn.MAX(Team.group))
             .where(Team.division == division)
             ).scalar()
+
+def get_number_of_divisions():
+    return (Team
+            .select(fn.MAX(Team.division))
+            ).scalar()
