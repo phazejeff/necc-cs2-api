@@ -1,8 +1,8 @@
 from database.models import Team, Match, Map
 from peewee import fn, JOIN
 
-def get_group_rankings(group):  
-    teams = get_teams_from_group(group)
+def get_group_rankings(division: int, group: int):  
+    teams = get_teams_from_group(division, group)
     teams_dict = []
     for team in teams:
         team["record"] = {
@@ -35,10 +35,11 @@ def get_group_rankings(group):
 
 
 
-def get_teams_from_group(group):
+def get_teams_from_group(division: int, group: int):
     return (Team
             .select(Team)
             .where(Team.group == group)
+            .where(Team.division == division)
             ).dicts()
 
 def get_matches_won(team):
@@ -100,7 +101,13 @@ def get_rounds_lost(team):
                    ).scalar()
     return team1_score + team2_score
 
-def get_number_of_groups():
+def get_number_of_groups(division: int):
     return (Team
             .select(fn.MAX(Team.group))
+            .where(Team.division == division)
+            ).scalar()
+
+def get_number_of_divisions():
+    return (Team
+            .select(fn.MAX(Team.division))
             ).scalar()
