@@ -123,37 +123,4 @@ with database.atomic():
     Map.bulk_create(maps_db, batch_size=50)
     PlayerStat.bulk_create(playerstats_db, batch_size=50)
 
-
-# placements_db: list[Placement] = []
-# for i in range(1, GROUP_AMOUNT + 1):
-#     positions = faceit.get_rankings(TOURNAMENT_ID, i)
-#     for num, pos in enumerate(positions):
-#         placement_db = Placement(
-#             team = pos.get("player").get("user_id"),
-#             fall_season_placement = num + 1
-#         )
-#         placements_db.append(placement_db)
-
-# with database.atomic():
-#     Placement.bulk_create(placements_db, batch_size=50)
-
-# for playoff_id in PLAYOFF_IDS:
-#     playoff = faceit.get_playoff_rankings(playoff_id).get("items")
-#     for item in playoff:
-#         for team in item.get("placements"):
-#             placement_db: Placement = Placement.get(Placement.team == team.get("id"))
-#             placement_db.fall_playoff_placement = item.get("bounds").get("left")
-#             placement_db.save()
-
-
-# for third_place_id in THIRD_PLACE_IDS:
-#     playoff = faceit.get_playoff_rankings(third_place_id).get("items")
-#     for item in playoff:
-#         for team in item.get("placements"):
-#             placement_db: Placement = Placement.get(Placement.team == team.get("id"))
-#             placement_db.fall_playoff_placement = item.get("bounds").get("left") + 2
-#             placement_db.save()
-
-# Placement.update_all_national_points()
-
 print("Done.")
