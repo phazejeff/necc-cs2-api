@@ -31,6 +31,7 @@ teamcaptain_db: list[TeamCaptain] = []
 playerstats_db: list[PlayerStat] = []
 
 for tournament_id in TOURNAMENT_IDS:
+    print(f"Division {str(division_num)}:")
     offset = 0
     pageAmount = 100
     matches: list[dict] = faceit.get_championship_matches(tournament_id, "past", pageAmount, offset)
