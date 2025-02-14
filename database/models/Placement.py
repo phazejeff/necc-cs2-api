@@ -10,6 +10,8 @@ class Placement(BaseModel):
     spring_season_placement = SmallIntegerField(default=0)
     spring_playoff_placement = SmallIntegerField(default=0)
     national_points = SmallIntegerField(default=0)
+    fall_division = SmallIntegerField(default=0)
+    spring_division = SmallIntegerField(default=0)
 
     @staticmethod
     def update_all_national_points():
