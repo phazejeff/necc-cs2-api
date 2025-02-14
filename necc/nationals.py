@@ -19,3 +19,9 @@ nationals_table = {
         5 : 50
     }
 }
+
+reduction_table = {
+    0 : 0,
+    1 : .3,
+    2 : .5
+}
