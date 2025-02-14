@@ -7,8 +7,8 @@ app = Flask(__name__)
 def hello_world():
     return "Ok."
 
-@app.route("/nationals")
-def nationals():
+@app.route("/nationals/<int:division>")
+def nationals(division: int):
     ignoredQualified = request.args.get('ignoreQualified')
     ignoredQualified = "" if ignoredQualified == None else ignoredQualified
     if ignoredQualified.lower() == 'true':
@@ -16,7 +16,7 @@ def nationals():
     else:
         ignoredQualified = False
 
-    placements_list = get_national_placements(ignoredQualified)
+    placements_list = get_national_placements(division, ignoredQualified)
     placements_list = jsonify(placements_list)
     placements_list.headers.add("Access-Control-Allow-Origin", "*")
     return placements_list
