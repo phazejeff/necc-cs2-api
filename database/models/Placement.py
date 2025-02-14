@@ -4,7 +4,7 @@ from necc import nationals_table
 from peewee import *
 
 class Placement(BaseModel):
-    team_id = TextField()
+    team_id = TextField(primary_key=True)
     fall_season_placement = SmallIntegerField(default=0)
     fall_playoff_placement = SmallIntegerField(default=0)
     spring_season_placement = SmallIntegerField(default=0)
