@@ -21,16 +21,16 @@ def nationals():
     placements_list.headers.add("Access-Control-Allow-Origin", "*")
     return placements_list
 
-@app.route("/seasonrankings/<int:group>")
-def season_rankings(group: int):
-    teams_list = get_group_rankings(group)
+@app.route("/seasonrankings/division/<int:division>/group/<int:group>")
+def season_rankings(division: int, group: int):
+    teams_list = get_group_rankings(division, group)
     teams_list = jsonify(teams_list)
     teams_list.headers.add("Access-Control-Allow-Origin", "*")
     return teams_list
 
-@app.route("/groupamount")
-def group_amount():
-    response = jsonify({"count" : get_number_of_groups()})
+@app.route("/groupamount/<int:division>")
+def group_amount(division: int):
+    response = jsonify({"count" : get_number_of_groups(division)})
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
