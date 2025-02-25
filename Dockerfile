@@ -12,7 +12,7 @@ COPY necc ./necc
 COPY database ./database
 
 # Create cron job
-RUN echo "*/5 * * * * /usr/local/bin/python3 /populate_db.py >> /var/log/cron.log 2>&1" > /etc/cron.d/populate-db-cron
+RUN echo "*/1 * * * * /usr/local/bin/python3 /populate_db.py >> /var/log/cron.log 2>&1" > /etc/cron.d/populate-db-cron
 
 RUN chmod 0644 /etc/cron.d/populate-db-cron
 RUN crontab /etc/cron.d/populate-db-cron
