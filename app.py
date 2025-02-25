@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-from necc import get_group_rankings, get_number_of_groups, get_national_placements, get_number_of_divisions
+from necc import *
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -43,6 +43,12 @@ def group_amount(division: int):
 def division_amount():
     response = jsonify({"count": get_number_of_divisions()})
     return response
+
+@app.route("/image/<string:match_id>/<int:map_num>/topplayers")
+@cross_origin()
+def top_players(match_id: str, map_num: int):
+    return get_top_players_of_match(match_id, map_num)
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
