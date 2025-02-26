@@ -57,17 +57,17 @@ for tournament_id in TOURNAMENT_IDS:
                 team2: dict = match.get("teams").get("faction2")
                 team2_db = Team.initialize(match, team2, division_num)
 
-                try: 
-                    Team.get_by_id(team1_db.team_id)
-                except DoesNotExist:
-                    if team1_db not in teams_db:
-                        teams_db.append(team1_db)
-                
-                try: 
-                    Team.get_by_id(team2_db.team_id)
-                except DoesNotExist:
-                    if team2_db not in teams_db:
-                        teams_db.append(team2_db)
+                try:
+                    teams_db.remove(team1_db)
+                except:
+                    pass
+                teams_db.append(team1_db)
+            
+                try:
+                    teams_db.remove(team2_db)
+                except:
+                    pass
+                teams_db.append(team2_db)
 
                 match_db = Match.initialize(match, team1, team2)
 
@@ -80,20 +80,20 @@ for tournament_id in TOURNAMENT_IDS:
                 for player in team1.get("roster"):
                     player: dict
                     player_db = Player.initialize(player, team1)
-                    try: 
-                        Player.get_by_id(player_db.player_id)
-                    except DoesNotExist:
-                        if player_db not in players_db:
-                            players_db.append(player_db)
+                    try:
+                        players_db.remove(player_db)
+                    except:
+                        pass
+                    players_db.append(player_db)
 
                 for player in team2.get("roster"):
                     player: dict
                     player_db = Player.initialize(player, team2)
-                    try: 
-                        Player.get_by_id(player_db.player_id)
-                    except DoesNotExist:
-                        if player_db not in players_db:
-                            players_db.append(player_db)
+                    try:
+                        players_db.remove(player_db)
+                    except:
+                        pass
+                    players_db.append(player_db)
                 
                 match_stats: dict = faceit.get_match_stats(match.get("match_id"))
                 rounds = match_stats.get("rounds")
@@ -123,10 +123,10 @@ for tournament_id in TOURNAMENT_IDS:
         matches: list[dict] = faceit.get_championship_matches(tournament_id, "past", pageAmount, offset)
 
 with database.atomic():
-    Team.bulk_create(teams_db, batch_size=50)
-    Player.bulk_create(players_db, batch_size=50)
-    Match.bulk_create(matches_db, batch_size=50)
-    Map.bulk_create(maps_db, batch_size=50)
-    PlayerStat.bulk_create(playerstats_db, batch_size=50)
+    Team.replace_many(teams_db)
+    Player.replace_many(players_db)
+    Match.replace_many(matches_db)
+    Map.replace_many(maps_db)
+    PlayerStat.replace_many(playerstats_db)
 
 print("Done.")
