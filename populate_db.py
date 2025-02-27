@@ -8,6 +8,7 @@ from database import database
 import os
 import json
 from peewee import DoesNotExist
+from playhouse.shortcuts import model_to_dict
 import traceback
 
 if __name__ == "__main__":
@@ -123,10 +124,10 @@ for tournament_id in TOURNAMENT_IDS:
         matches: list[dict] = faceit.get_championship_matches(tournament_id, "past", pageAmount, offset)
 
 with database.atomic():
-    Team.replace_many(teams_db)
-    Player.replace_many(players_db)
-    Match.replace_many(matches_db)
-    Map.replace_many(maps_db)
-    PlayerStat.replace_many(playerstats_db)
+    Team.replace_many([obj.__data__ for obj in teams_db]).execute()
+    Player.replace_many([obj.__data__ for obj in players_db]).execute()
+    Match.replace_many([obj.__data__ for obj in matches_db]).execute()
+    Map.replace_many([obj.__data__ for obj in maps_db]).execute()
+    PlayerStat.replace_many([obj.__data__ for obj in playerstats_db]).execute()
 
 print("Done.")
