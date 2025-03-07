@@ -116,10 +116,10 @@ for tournament_id in TOURNAMENT_IDS:
                     try: 
                         map_in_db: Map = Map.get_by_id(map_db.map_id)
                         if map_in_db.__data__ != map_db.__data__:
-                            maps_db.append(maps_db)
+                            maps_db.append(map_db)
                     except DoesNotExist:
                         if map_db not in maps_db:
-                            maps_db.append(maps_db)
+                            maps_db.append(map_db)
 
                     teams: list[dict] = map.get("teams")
                     for team in teams:
