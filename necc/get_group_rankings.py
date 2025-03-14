@@ -40,6 +40,9 @@ def get_team_past_matches(team_id: str):
     ).dicts())
 
     for match in matches:
+        match["team1"] = Team.get_by_id(match["team1"]).__data__
+        match["team2"] = Team.get_by_id(match["team2"]).__data__
+
         maps = list((Map
         .select(Map)
         .where((match["match_id"] == Map.match_id))
