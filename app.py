@@ -54,5 +54,11 @@ def top_players_match(match_id: str):
 def top_players_map(match_id: str, map_num: int):
     return get_top_players_of_map(match_id, map_num)
 
+@app.route("/matches/<string:team_id>")
+@cross_origin()
+def past_matches(team_id: str):
+    print(get_team_past_matches(team_id))
+    return get_team_past_matches(team_id)
+
 if __name__ == "__main__":
     app.run(debug=True)

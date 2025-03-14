@@ -33,6 +33,20 @@ def get_group_rankings(division: int, group: int):
         reverse=True)
     return teams_sorted
 
+def get_team_past_matches(team_id: str):
+    matches = list((Match
+    .select(Match)
+    .where((Match.team1 == team_id) | (Match.team2 == team_id))
+    ).dicts())
+
+    for match in matches:
+        maps = list((Map
+        .select(Map)
+        .where((match["match_id"] == Map.match_id))
+        ).dicts())
+        match["maps"] = maps
+    
+    return matches
 
 
 def get_teams_from_group(division: int, group: int):
