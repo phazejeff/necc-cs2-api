@@ -114,7 +114,8 @@ for tournament_id in TOURNAMENT_IDS:
                     map: dict
                     map_db = Map.initialize(map, match)
                     try: 
-                        map_in_db: Map = Map.get_by_id(map_db.map_id)
+                        map_in_db: Map = Map.get((map_db.match_id == Map.match_id) & (map_db.map_num == Map.map_num))
+                        map_db.map_id = map_in_db.map_id
                         if map_in_db.__data__ != map_db.__data__:
                             maps_db.append(map_db)
                     except DoesNotExist:
