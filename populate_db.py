@@ -113,9 +113,13 @@ for tournament_id in TOURNAMENT_IDS:
                 for map in match_stats.get("rounds"):
                     map: dict
                     map_db = Map.initialize(map, match)
-                    map_in_db: Map = Map.get_or_none((map_db.match_id == Map.match_id) & (map_db.map_num == Map.map_num))
-                    if map_in_db == None:
-                        maps_db.append(map_db)
+                    try: 
+                        map_in_db: Map = Map.get_by_id(map_db.map_id)
+                        if map_in_db.__data__ != map_db.__data__:
+                            maps_db.append(map_db)
+                    except DoesNotExist:
+                        if map_db not in maps_db:
+                            maps_db.append(map_db)
 
                     teams: list[dict] = map.get("teams")
                     for team in teams:

@@ -25,7 +25,7 @@ class Map(BaseModel):
         team1_stats: dict = teams[0].get("team_stats")
         team2_stats: dict = teams[1].get("team_stats")
         return Map(
-            map_id = uuid.uuid4(),
+            map_id = uuid.uuid5(uuid.NAMESPACE_DNS, f"{match.get("match_id")}-{map.get("match_round")}"),
             match_id = match.get("match_id"),
             map_num = map.get("match_round"),
             map = map_stats.get("Map"),
