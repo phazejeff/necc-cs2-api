@@ -19,8 +19,14 @@ def get_group_rankings(division: int, group: int):
                 "lost" : get_rounds_lost(team)
             }
         }
+
+        # ff wins count as 2-0 with both being 13-0 wins
+        ff_wins, ff_losses = get_forfeit_wins_and_loss_count(team)
+        team["record"]["maps"]["won"] += ff_wins * 2
+        team["record"]["maps"]["lost"] += ff_losses * 2
+        team["record"]["rounds"]["won"] += ff_wins * 2 * 13
+        team["record"]["rounds"]["lost"] += ff_losses * 2 * 13
         teams_dict.append(team)
-        get_rounds_won(team)
     
 
     teams_sorted = sorted(
@@ -32,6 +38,29 @@ def get_group_rankings(division: int, group: int):
         ), 
         reverse=True)
     return teams_sorted
+
+# Assume if a match has no map data it must have been a ff
+def get_forfeit_wins_and_loss_count(team):
+    ff_wins = 0
+    ff_losses = 0
+
+    matches: list[Match] = (Match
+            .select(Match)
+            .where((Match.team1 == team["team_id"]) | (Match.team2 == team["team_id"]))
+            )
+    for match in matches:
+        map_count = (Map
+                .select(Map)
+                .where(Map.match_id == match.match_id)
+                ).count()
+        if map_count == 0:
+            if match.winner.team_id == team["team_id"]:
+                ff_wins += 1
+            else:
+                ff_losses += 1
+        
+    print(f"W: {ff_wins}, L: {ff_losses}")
+    return ff_wins, ff_losses
 
 def get_team_past_matches(team_id: str):
     matches = list((Match
