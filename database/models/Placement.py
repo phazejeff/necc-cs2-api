@@ -26,6 +26,8 @@ class Placement(BaseModel):
             )
 
             division_loss = abs(placement.spring_division - placement.fall_division)
+            if placement.spring_division == 0 or placement.fall_division == 0:
+                division_loss = 0
             placement.national_points -= (placement.national_points * reduction_table[division_loss])
             placement.national_points = math.ceil(placement.national_points)
             if division_loss >= 3:
