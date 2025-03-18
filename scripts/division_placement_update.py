@@ -38,7 +38,8 @@ faceit = Faceit(FACEIT_KEY)
 
 database.connect()
 
-placements_db: list[Placement] = []
+placements_db_fall: list[Placement] = []
+placements_db_spring: list[Placement] = []
 for tournament in tournaments:
     print(f"Running for {tournament}")
     for i in range(1, tournament.group_amount + 1):
@@ -49,17 +50,18 @@ for tournament in tournaments:
                     team_id = pos.get("player").get("user_id"),
                     fall_division = tournament.division_num
                 )
+                placements_db_fall.append(placement_db)
             elif tournament.semester == "spring":
                 placement_db = Placement(
                     team_id = pos.get("player").get("user_id"),
                     spring_division = tournament.division_num
                 )
+                placements_db_spring.append(placement_db)
             else:
                 print("something broke.")
-            placements_db.append(placement_db)
 
     with database.atomic():
         if tournament.semester == "fall":
-            Placement.bulk_update(placements_db, batch_size=50, fields=["fall_division"])
+            Placement.bulk_update(placements_db_fall, batch_size=50, fields=["fall_division"])
         elif tournament.semester == "spring":
-            Placement.bulk_update(placements_db, batch_size=50, fields=["spring_division"])
+            Placement.bulk_update(placements_db_spring, batch_size=50, fields=["spring_division"])
