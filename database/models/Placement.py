@@ -2,6 +2,7 @@ from database import BaseModel
 from database.models import Team
 from necc import nationals_table, reduction_table
 from peewee import *
+import math
 
 class Placement(BaseModel):
     team_id = TextField(primary_key=True)
@@ -24,9 +25,9 @@ class Placement(BaseModel):
                 nationals_table["playoffs"][placement.spring_playoff_placement]
             )
 
-            division_loss = max(placement.spring_division - placement.fall_division, 0)
+            division_loss = abs(placement.spring_division - placement.fall_division)
             placement.national_points -= (placement.national_points * reduction_table[division_loss])
-            placement.national_points = round(placement.national_points)
+            placement.national_points = math.ceil(placement.national_points)
             if division_loss >= 3:
                 placement.national_points = 0
         Placement.bulk_update(placements, fields=[Placement.national_points])
