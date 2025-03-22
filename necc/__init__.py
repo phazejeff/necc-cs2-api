@@ -2,3 +2,4 @@ from .nationals import nationals_table, reduction_table
 from .get_group_rankings import get_group_rankings, get_number_of_groups, get_number_of_divisions, get_team_past_matches
 from .nationals_placements import get_national_placements
 from .get_data import get_top_players_of_map, get_top_players_of_match
+from .playerstats import get_all_total_playerstats

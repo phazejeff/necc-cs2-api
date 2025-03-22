@@ -59,5 +59,10 @@ def top_players_map(match_id: str, map_num: int):
 def past_matches(team_id: str):
     return get_team_past_matches(team_id)
 
+@app.route("/stats/topplayers")
+@cross_origin()
+def top_players():
+    return get_all_total_playerstats()
+
 if __name__ == "__main__":
     app.run(debug=True)
