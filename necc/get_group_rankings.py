@@ -59,7 +59,6 @@ def get_forfeit_wins_and_loss_count(team):
             else:
                 ff_losses += 1
         
-    print(f"W: {ff_wins}, L: {ff_losses}")
     return ff_wins, ff_losses
 
 def get_team_past_matches(team_id: str):
