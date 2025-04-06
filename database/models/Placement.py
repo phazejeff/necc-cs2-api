@@ -20,9 +20,7 @@ class Placement(BaseModel):
         for placement in placements:
             placement.national_points = (
                 nationals_table["season"][placement.fall_season_placement] +
-                nationals_table["season"][placement.spring_season_placement] +
-                nationals_table["playoffs"][placement.fall_playoff_placement] +
-                nationals_table["playoffs"][placement.spring_playoff_placement]
+                nationals_table["playoffs"][placement.fall_playoff_placement]
             )
 
             division_loss = abs(placement.spring_division - placement.fall_division)
@@ -32,4 +30,9 @@ class Placement(BaseModel):
             placement.national_points = math.ceil(placement.national_points)
             if division_loss >= 3:
                 placement.national_points = 0
+            
+            placement.national_points += (
+                nationals_table["season"][placement.spring_season_placement] +
+                nationals_table["playoffs"][placement.spring_playoff_placement]
+            )
         Placement.bulk_update(placements, fields=[Placement.national_points])
