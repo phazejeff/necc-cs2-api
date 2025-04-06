@@ -1,4 +1,4 @@
-from database.models import PlayerStat, Player, Team
+from database.models import PlayerStat, Player, Team, Map
 from peewee import fn
 
 def get_all_total_playerstats():
@@ -11,6 +11,7 @@ def get_all_total_playerstats():
                 Team.name.alias('team_name'),
                 Team.division,
                 Team.group,
+                fn.SUM(Map.team1_score + Map.team2_score).alias('total_rounds'),
                 fn.SUM(PlayerStat.one_v_one_count).alias('total_one_v_one_count'),
                 fn.SUM(PlayerStat.one_v_one_wins).alias('total_one_v_one_wins'),
                 fn.SUM(PlayerStat.one_v_two_count).alias('total_one_v_two_count'),
@@ -59,6 +60,8 @@ def get_all_total_playerstats():
              )
              .join(Player)
              .join(Team)
+             .switch(PlayerStat)
+             .join(Map)
              .group_by(PlayerStat.player)
              ).dicts()
     
