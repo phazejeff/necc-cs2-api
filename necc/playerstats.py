@@ -15,13 +15,14 @@ def filter_by_group(sql, group):
 def calculate_hltv_rating_dave(playerstat_dict: dict):
     if playerstat_dict.get("total_rounds") == 0 or playerstat_dict.get("total_rounds") == None:
         return 0
-    return (
+    rating = (
         (0.3591 * (playerstat_dict.get("total_kills") / playerstat_dict.get("total_rounds"))) +
         (-0.5329 * (playerstat_dict.get("total_deaths") / playerstat_dict.get("total_rounds"))) +
         (0.2372 * ((2.13 * (playerstat_dict.get("total_kills") / playerstat_dict.get("total_rounds"))) + (0.42 * (playerstat_dict.get("total_assists") / playerstat_dict.get("total_rounds"))) - 0.41)) +
         (0.0032 * playerstat_dict.get("avg_adr")) +
         0.1587
     )
+    return max(rating, 0)
 
 # https://www.hltv.org/forums/threads/2433094/rating-20
 def calculate_hltv_rating_brazil(playerstat_dict: dict):
@@ -30,7 +31,7 @@ def calculate_hltv_rating_brazil(playerstat_dict: dict):
     total_rounds = playerstat_dict.get("total_rounds")
     kpr = playerstat_dict.get("total_kills") / total_rounds
     dpr = playerstat_dict.get("total_deaths") / total_rounds
-    return (
+    rating = (
         (0.405022 * kpr) +
         (-0.657678 * dpr) +
         (
@@ -43,7 +44,7 @@ def calculate_hltv_rating_brazil(playerstat_dict: dict):
         (0.00410341 * playerstat_dict.get("avg_adr")) +
         0.343334
     )
-
+    return max(rating, 0)
 
 def append_hltv_rating(dicts: list[dict]):
     for row in dicts:
