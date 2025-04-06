@@ -62,7 +62,26 @@ def past_matches(team_id: str):
 @app.route("/stats/topplayers")
 @cross_origin()
 def top_players():
-    return get_all_total_playerstats()
+    sql = get_all_total_playerstats()
+    dict = convert_to_dict(sql)
+    return append_hltv_rating(dict)
+
+@app.route("/stats/topplayers/division/<int:division>")
+@cross_origin()
+def top_players_division(division):
+    sql = get_all_total_playerstats()
+    sql = filter_by_division(sql, division)
+    dict = convert_to_dict(sql)
+    return append_hltv_rating(dict)
+
+@app.route("/stats/topplayers/division/<int:division>/group/<int:group>")
+@cross_origin()
+def top_players_group(division, group):
+    sql = get_all_total_playerstats()
+    sql = filter_by_division(sql, division)
+    sql = filter_by_group(sql, group)
+    dict = convert_to_dict(sql)
+    return append_hltv_rating(dict)
 
 if __name__ == "__main__":
     app.run(debug=True)
