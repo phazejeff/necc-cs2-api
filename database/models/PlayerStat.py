@@ -1,8 +1,10 @@
 from database import BaseModel
 from database.models import Map, Player
+import uuid
 from peewee import *
 
 class PlayerStat(BaseModel):
+    playerstat_id = UUIDField(primary_key=True)
     map = ForeignKeyField(Map, backref='player_stats')
     player = ForeignKeyField(Player, backref='stats')
 
@@ -57,6 +59,7 @@ class PlayerStat(BaseModel):
     def initialize(player: dict, map: Map):
         playerstats: dict = player.get("player_stats")
         return PlayerStat(
+            playerstat_id=uuid.uuid5(uuid.NAMESPACE_DNS, f"{player.get("player_id")}-{map.map_id}"),
             map=map,
             player=player.get("player_id"),
             one_v_one_count=int(playerstats.get("1v1Count", 0)),
