@@ -10,7 +10,7 @@ def get_national_placements(division: int, ignoredQualified: bool):
         )
 
     if ignoredQualified:
-        placements = placements.where(Placement.fall_playoff_placement != 1)
+        placements = placements.where(Placement.fall_playoff_placement != 1 & Placement.spring_playoff_placement != 1)
 
     placements_list: list[dict] = []
     for placement in placements:
