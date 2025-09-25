@@ -85,6 +85,7 @@ def get_teams_from_group(division: int, group: int):
             .select(Team)
             .where(Team.group == group)
             .where(Team.division == division)
+            .where(Team.name != "bye")
             ).dicts()
 
 def get_matches_won(team):
