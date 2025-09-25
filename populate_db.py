@@ -38,8 +38,8 @@ for tournament_id in TOURNAMENT_IDS:
     matches: list[dict] = faceit.get_championship_matches(tournament_id, "past", pageAmount, offset)
     championship_details = faceit.get_championship_details(tournament_id)
     championship_name: str = championship_details.get('name')
-    division_name = championship_name.split()[0]
-    division_num = int(division_name[1])
+    division_name = championship_name.split()
+    division_num = int(division_name[-1])
 
     print(f"Division {str(division_num)}:")
 
