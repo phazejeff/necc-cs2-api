@@ -78,7 +78,7 @@ for tournament_id in TOURNAMENT_IDS:
                     pass
 
                 try:
-                    match_counts: Match = (Match.select(Match).where(Match.team1 == team1_db.team_id & Match.team2 == team2_db.team_id)).count()
+                    match_counts: Match = (Match.select(Match).where((Match.team1 == team1_db.team_id) & (Match.team2 == team2_db.team_id))).count()
                     if match_counts > 0:
                         continue
                 except DoesNotExist:
