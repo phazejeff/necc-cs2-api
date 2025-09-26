@@ -77,6 +77,13 @@ for tournament_id in TOURNAMENT_IDS:
                 except DoesNotExist:
                     pass
 
+                try:
+                    match_counts: Match = (Match.select(Match).where(Match.team1 == team1_db.team_id & Match.team2 == team2_db.team_id)).count()
+                    if match_counts > 0:
+                        continue
+                except DoesNotExist:
+                    pass
+
                 if match_db not in matches_db:
                     matches_db.append(match_db)
 
