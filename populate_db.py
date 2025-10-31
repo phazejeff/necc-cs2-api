@@ -41,7 +41,12 @@ for tournament_id in TOURNAMENT_IDS:
     championship_details = faceit.get_championship_details(tournament_id)
     championship_name: str = championship_details.get('name')
     division_name = championship_name.split()
-    division_num = int(division_name[-1])
+    if "G-D" in division_name:
+        division_num = int(division_name[division_name.index("Division") + 1])
+        extra_tourny = True
+    else:
+        division_num = int(division_name[-1])
+        extra_tourny = False
 
     print(f"Division {str(division_num)}:")
 
@@ -53,7 +58,9 @@ for tournament_id in TOURNAMENT_IDS:
                 team1_db = Team.initialize(match, team1, division_num)
                 team2: dict = match.get("teams").get("faction2")
                 team2_db = Team.initialize(match, team2, division_num)
-
+                if extra_tourny == True:
+                    team1_db.group = 4
+                    team2_db.group = 4
                 try: 
                     team_in_db: Team = Team.get_by_id(team1_db.team_id)
                     if team_in_db.__data__ != team1_db.__data__:
