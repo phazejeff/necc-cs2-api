@@ -11,6 +11,8 @@ from peewee import DoesNotExist
 from playhouse.shortcuts import model_to_dict
 import traceback
 
+from remove_wrong_ff import remove_wrong_ff
+
 if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
@@ -77,12 +79,12 @@ for tournament_id in TOURNAMENT_IDS:
                 except DoesNotExist:
                     pass
 
-                try:
-                    match_counts: Match = (Match.select(Match).where((Match.team1 == team1_db.team_id) & (Match.team2 == team2_db.team_id))).count()
-                    if match_counts > 0:
-                        continue
-                except DoesNotExist:
-                    pass
+                # try:
+                #     match_counts: Match = (Match.select(Match).where((Match.team1 == team1_db.team_id) & (Match.team2 == team2_db.team_id))).count()
+                #     if match_counts > 0:
+                #         continue
+                # except DoesNotExist:
+                #     pass
 
                 if match_db not in matches_db:
                     matches_db.append(match_db)
@@ -164,4 +166,5 @@ with database.atomic():
     for batch in chunked_iterator(playerstats_db, batch_size):
         PlayerStat.replace_many([obj.__data__ for obj in batch]).execute()
 
+remove_wrong_ff()
 print("Done.")
