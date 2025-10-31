@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y cron
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 COPY app.py .
+COPY remove_wrong_ff.py .
 COPY populate_db.py .
 COPY faceit ./faceit
 COPY necc ./necc
